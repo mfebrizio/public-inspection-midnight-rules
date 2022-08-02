@@ -1,0 +1,112 @@
+# import dependencies
+from datetime import date
+import requests
+
+
+def query_endpoint_public_inspection(endpoint_url:str = r"https://www.federalregister.gov/api/v1/public-inspection-documents.json?"):
+    
+    # --------------------------------------------------
+    # define parameters
+    res_per_page = 1000
+    page_offset = 0  # both 0 and 1 return first page
+
+    fieldsList = ["agencies", "agency_letters", "agency_names", 
+                  "document_number", "editorial_note", "filing_type", 
+                  "json_url", "publication_date", "type"
+                  ]
+
+    years = list(map(str, [2001, 2009, 2017, 2021]))
+    days = [f"01-{x}" for x in range(15,20)]
+
+    # dictionary of parameters
+    dict_params = {"per_page": res_per_page,
+                   "page": page_offset,
+                   "fields[]": fieldsList,
+                   "conditions[available_on]": ""
+                   }
+
+    # --------------------------------------------------
+    # retrieve data from Federal Register API
+    # create objects
+    dctsResults_all = []
+    dctsCount_all = 0
+
+    # for loop to pull data for each publication year
+    for year in years:
+        print(f"\n***** Retrieving results for year = {year} *****")
+
+        dctsResults = []
+        dctsCount = 0
+        # for loop to pull data for each quarter
+        for d in days:
+            available_on = f"{year}-{d}"
+
+            # update parameters for year
+            dict_params.update({"conditions[available_on]": available_on})
+
+            # get documents
+            dcts_response = requests.get(endpoint_url, params=dict_params)
+            print(dcts_response.status_code,
+                  dcts_response.headers["date"],
+                  dcts_response.url, sep="\n")  # print request URL
+            
+            if dcts_response.json()["count"] != 0:
+                
+                # set variables
+                dctsCount += dcts_response.json()["count"]
+                
+                try:  # for days with multiple pages of results
+                    dctsPages = dcts_response.json()["total_pages"]  # number of pages to retrieve all results
+                    
+                    # for loop for grabbing results from each page
+                    for page in range(1, dctsPages + 1):
+                        dict_params.update({"page": page})
+                        dcts_response = requests.get(endpoint_url, params=dict_params)
+                        results_this_page = dcts_response.json()["results"]
+                        for n in results_this_page:
+                            n.update({"public_inspection_issue_date": available_on})
+                        dctsResults.extend(results_this_page)
+                        print(f"Number of results retrieved = {len(dctsResults)}")
+                
+                except:  # when only one page of results
+                    results_this_page = dcts_response.json()["results"]
+                    for n in results_this_page:
+                        n.update({"public_inspection_issue_date": available_on})
+                    dctsResults.extend(results_this_page)
+                    print(f"Number of results retrieved = {len(dctsResults)}")
+                
+            else:  # exception when no documents for that "available_on" date
+                print(f"No documents available for inspection on {available_on}.")
+                continue
+
+        # create dictionary for year to export as json
+        if len(dctsResults) == dctsCount:
+            pass
+
+        else:
+            print("Counts do not align for " + str(year) + ": " + str(len(dctsResults)) + " =/= " + str(dctsCount))
+
+        # extend list of cumulative results and counts
+        dctsResults_all.extend(dctsResults)
+        dctsCount_all += dctsCount
+
+    # save params for export with metadata
+    save_params = dict_params.copy()
+    save_params.pop("page")
+    save_params.pop("per_page")
+    save_params.pop("conditions[available_on]")
+
+    # create dictionary of data with retrieval date
+    dctsRules = {"source": "Federal Register API, https://www.federalregister.gov/reader-aids/developer-resources/rest-api",
+                 "endpoint": endpoint_url,
+                 "date_retrieved": str(date.today()),
+                 "parameters": save_params,
+                 "count": dctsCount_all,
+                 "results": dctsResults_all
+                }
+    if dctsRules["count"] == len(dctsRules["results"]):
+        print("\nDictionary with retrieval date created!")
+        return dctsRules
+    else:
+        print("\nError creating dictionary...")
+
