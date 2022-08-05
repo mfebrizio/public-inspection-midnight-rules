@@ -4,7 +4,14 @@ import requests
 
 
 def query_endpoint_public_inspection(endpoint_url:str = r"https://www.federalregister.gov/api/v1/public-inspection-documents.json?"):
-    
+    """Queries the GET​/public-inspection-documents.{format} endpoint of the Federal Register API.
+
+    Args:
+        endpoint_url (_type_, optional): Endpoint for retrieving public inspection documents. Defaults to r"https://www.federalregister.gov/api/v1/public-inspection-documents.json?".
+
+    Returns:
+        dict: JSON object with metadata and retrieved documents.
+    """    
     # --------------------------------------------------
     # define parameters
     res_per_page = 1000
