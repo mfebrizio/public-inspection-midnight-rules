@@ -54,4 +54,11 @@ dfRules = df.loc[bool_rules, :]
 bool_note = np.array(dfRules["editorial_note"].notna())
 dfWithdrawn = dfRules.loc[bool_note, :]
 
+# %% Filter columns
+
+keep_cols = ["year", "date", "agencies_id_uq", "agencies_slug_uq", "agency_names", 
+             "agency_letters", "document_number", "editorial_note", "json_url"]
+print(dfWithdrawn.loc[:, keep_cols])
+
+
 # %%
