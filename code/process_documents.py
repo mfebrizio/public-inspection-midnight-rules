@@ -11,6 +11,7 @@ import pandas as pd
 
 from clean_agencies import FR_clean_agencies
 from columns_to_date import column_to_date
+from search_columns import search_columns
 
 p = Path(__file__)
 read_dir = p.parents[1].joinpath("data", "raw")
@@ -33,18 +34,20 @@ with open(file_path, "r", encoding="utf-8") as f:
 df = pd.DataFrame(data["results"])
 
 
-# %%
-
-print(df["public_inspection_issue_date"].value_counts(dropna=False))
-print(df.columns)
-
-
 # %% Data cleaning
 
 # clean up API columns
-df = FR_clean_agencies(df)
+if "agencies_id_unique" in df.columns:
+    pass
+else:
+    df = FR_clean_agencies(df)
 df.loc[:, "date"] = column_to_date(df, column="public_inspection_issue_date")
 df.loc[:, "year"] = df["date"].apply(lambda x: x.year)
+df.loc[:, "agency_names"] = df["agency_names"].apply(lambda x: "; ".join(x))
+
+# check for agency letters; drop column if none
+if sum(df["agency_letters"].notna()) == 0:
+    print("No agency letters.")
 
 # filter by rules
 bool_rules = np.array(df["type"] == "Rule")
@@ -52,13 +55,23 @@ dfRules = df.loc[bool_rules, :]
 
 # filter by has editorial_note
 bool_note = np.array(dfRules["editorial_note"].notna())
-dfWithdrawn = dfRules.loc[bool_note, :]
+dfNote = dfRules.loc[bool_note, :]
+
+# search editorial_note for withdrawals
+dfWithdrawn = search_columns(dfNote, patterns=[r"\bwithdr[\w]+\b"], columns=["editorial_note"])
+
 
 # %% Filter columns
 
-keep_cols = ["year", "date", "agencies_id_uq", "agencies_slug_uq", "agency_names", 
-             "agency_letters", "document_number", "editorial_note", "json_url"]
-print(dfWithdrawn.loc[:, keep_cols])
+keep_cols = ["year", "date", "agencies_slug_uq", "agency_names", 
+             "document_number", "editorial_note", "json_url"]
+dfWithdrawn = dfWithdrawn.loc[:, keep_cols]
 
 
-# %%
+# %% Save processed data
+
+file_path = write_dir / rf"public_inspection_midnight_rules_withdrawn.csv"
+with open(file_path, 'w', encoding='utf-8') as f:
+    dfWithdrawn.to_csv(f, index_label='index', line_terminator='\n')
+print('Exported as CSV!')
+
