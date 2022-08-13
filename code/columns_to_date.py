@@ -7,7 +7,6 @@ Created on Wed Feb 16 12:27:50 2022
 
 # import dependencies
 import pandas as pd
-#from datetime import datetime
 
 # function that converts single column from a dataframe into date format
 def column_to_date(df, column:str = ''):
@@ -41,6 +40,7 @@ def column_to_date(df, column:str = ''):
     
     # return series for input column
     return df_copy.loc[:, column]
+
 
 # function that handles multiple columns
 def columns_to_date(df, columns:list = []):

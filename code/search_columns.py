@@ -1,9 +1,11 @@
 # import dependencies
 import itertools
+import re
 import numpy as np
 
+
 # Defining a function to search for string patterns within dataframe columns
-def search_columns(df, patterns = [], columns = [], re_flags = None):
+def search_columns(df, patterns:list = [], columns:list = [], re_flags = re.I|re.X):
     """Search columns for string patterns within dataframe columns.
 
     Parameters
@@ -15,7 +17,7 @@ def search_columns(df, patterns = [], columns = [], re_flags = None):
     Keyword arguments:
     patterns -- list of string patterns to input, compatible with regex (default = empty list)
     columns -- list of column names to search for input patterns (default = empty list)
-    re_flags -- regex flags to use, such as re.I|re.X (default = None)
+    re_flags -- regex flags to use, such as re.I|re.X (default = re.I|re.X)
     
     Dependencies
     ------------
@@ -52,7 +54,7 @@ def search_columns(df, patterns = [], columns = [], re_flags = None):
             searchbool = np.array([True if n==True else False for n in searchre])
             bool_list.append(searchbool)
            
-    else: # eg, patterns formatted as a list of len(n>1) but does not match len(columns)
+    else:  # eg, patterns formatted as a list of len(n>1) but does not match len(columns)
         raise Exception('Length of inputs are incorrect. Lengths of "patterns" and "columns" must match '+
         'or a single pattern can map to multiple columns.')
 
@@ -65,3 +67,4 @@ def search_columns(df, patterns = [], columns = [], re_flags = None):
     dfResults = df.loc[filter_bool,:].copy(deep=True)
     print('Count: '+str(len(dfResults)))
     return dfResults
+

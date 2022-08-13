@@ -512,7 +512,7 @@ def FR_clean_agencies(df_input, column = 'agencies', schema = defaultAgencySchem
     
     # 2) extract data from 'agencies' column
     
-    # create deep copy of input datafram
+    # create deep copy of input dataframe
     df = df_input.copy(deep=True)
     
     # create list of agencies data
@@ -526,10 +526,10 @@ def FR_clean_agencies(df_input, column = 'agencies', schema = defaultAgencySchem
     # loop over documents and extract agencies data
     for rule in agencies_list:
         
-        # len==7 is the normal length of an agencies dict with complete information
-        slugs = [x['slug'] if len(x)==7 else x['raw_name'].lower().replace(" ","-") for x in rule]
-        ids = [x['id'] for x in rule if len(x)==7]
-        parents = [x['parent_id'] for x in rule if len(x)==7]
+        # try get() method instead
+        slugs = [x.get('slug', x['raw_name'].lower().replace(" ","-")) for x in rule]
+        ids = [x.get('id') for x in rule]
+        parents = [x.get('parent_id') for x in rule]
         
         slug_list.append(slugs)
         id_list.append(ids)
@@ -575,7 +575,7 @@ def FR_clean_agencies(df_input, column = 'agencies', schema = defaultAgencySchem
             else:
                 r_list.append(row['agency_ids'][counter])
             
-            counter = counter + 1
+            counter += 1
         
         ''' this doesn't work yet; 
         trying to fix instances of agencies with parent agencies who also have parent agencies
