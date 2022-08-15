@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Feb 16 12:27:50 2022
-
-@author: mark
-"""
-
 # import dependencies
 import pandas as pd
 
