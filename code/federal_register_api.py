@@ -1,10 +1,79 @@
 # import dependencies
 from datetime import date
+import json
+from pathlib import Path
+
 import requests
 
 
-def query_endpoint_public_inspection(endpoint_url:str = r"https://www.federalregister.gov/api/v1/public-inspection-documents.json?"):
-    """Queries the GET​/public-inspection-documents.{format} endpoint of the Federal Register API.
+class AgencyMetadata:
+    """Class for storing and transforming agency metadata from Federal Register API.
+    """    
+    def __init__(self, data):
+        self.data = data
+        
+    def transform(self):
+        agency_dict = {}
+        for i in self.data:
+            if type(i) == dict:  # check if type is dict
+                slug = str(i.get("slug", "none"))
+                agency_dict.update({slug: i})                    
+            else:  # cannot use this method on non-dict structures
+                continue
+        while "none" in agency_dict:
+            agency_dict.pop("none")
+        # return transformed ata as a dictionary
+        return agency_dict
+
+
+def query_endpoint_agencies(endpoint_url:str = r"https://www.federalregister.gov/api/v1/agencies.json"):
+    """Queries the GET agencies endpoint of the Federal Register API.
+    Retrieve agencies metadata. After defining endpoint url, no parameters are needed.
+
+    Args:
+        endpoint_url (str, optional): Endpoint for retrieving agencies metadata. Defaults to r"https://www.federalregister.gov/api/v1/agencies.json".
+
+    Raises:
+        Exception: Response status code if the request fails.
+
+    Returns:
+        list of dict: response object in JSON format
+    """
+    # request documents; raise error if it fails
+    agencies_response = requests.get(endpoint_url)
+    if agencies_response.status_code != 200:
+        raise Exception(f"API request failed. Status code: {agencies_response.status_code}")
+    
+    # return response as json
+    return agencies_response.json()
+
+
+def save_agencies_metadata(json_metadata: json, 
+                           data_dir: Path = Path(__file__).parents[1].joinpath("data", "raw"), 
+                           file_name: str = r"agencies_endpoint_metadata.json"):
+    """Save metadata on agencies from Federal Register API.
+
+    Args:
+        json_metadata (json): Input metadata returned from API.
+        data_dir (Path, optional): Path for saving JSON. Defaults to Path(__file__).parents[1].joinpath("data", "raw").
+        file_name (str, optional): File name to use when saving. Defaults to r"agencies_endpoint_metadata.json".
+    """    
+    # create dictionary of data with retrieval date
+    dict_metadata = {"source": "Federal Register API, https://www.federalregister.gov/reader-aids/developer-resources/rest-api",
+                     "endpoint": r"https://www.federalregister.gov/api/v1/agencies.json",
+                     "date_retrieved": str(date.today()),
+                     "count": len(json_metadata), 
+                     "results": json_metadata
+                     }
+    # export json file
+    file_path = data_dir / file_name
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(dict_metadata, f, indent=4)
+    print("Exported as JSON!")
+
+
+def query_endpoint_public_inspection(endpoint_url: str = r"https://www.federalregister.gov/api/v1/public-inspection-documents.json?"):
+    """Queries the GET public-inspection-documents.{format} endpoint of the Federal Register API.
 
     Args:
         endpoint_url (_type_, optional): Endpoint for retrieving public inspection documents. Defaults to r"https://www.federalregister.gov/api/v1/public-inspection-documents.json?".
@@ -111,9 +180,19 @@ def query_endpoint_public_inspection(endpoint_url:str = r"https://www.federalreg
                  "count": dctsCount_all,
                  "results": dctsResults_all
                 }
+    # return output if count (metadata) matches length of results (calculation)
     if dctsRules["count"] == len(dctsRules["results"]):
         print("\nDictionary with retrieval date created!")
         return dctsRules
     else:
         print("\nError creating dictionary...")
+
+
+# only query agencies endpoint when run as script; save that output 
+if __name__ == "__main__":
+    agencies_response = query_endpoint_agencies()
+    agencies_metadata = AgencyMetadata(agencies_response).transform()    
+    save_agencies_metadata(agencies_metadata)
+else:
+    pass
 
