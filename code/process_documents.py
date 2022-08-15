@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from clean_agencies import FR_clean_agencies
+from federal_agencies import clean_agencies_column
 from columns_to_date import column_to_date
 from search_columns import search_columns
 
@@ -27,11 +27,16 @@ else:
 
 # %% Load data
 
-file_path = read_dir / rf"public_inspection_endpoint_rules_midnight.json"
+# public inspection data
+file_path = read_dir / r"public_inspection_endpoint_rules_midnight.json"
 with open(file_path, "r", encoding="utf-8") as f:
     data = json.load(f)
-
 df = pd.DataFrame(data["results"])
+
+# agencies metadata
+file_path = read_dir / r"agencies_endpoint_metadata.json"
+with open(file_path, "r", encoding="utf-8") as f:
+    metadata = json.load(f)["results"]
 
 
 # %% Data cleaning
@@ -40,7 +45,7 @@ df = pd.DataFrame(data["results"])
 if "agencies_id_unique" in df.columns:
     pass
 else:
-    df = FR_clean_agencies(df)
+    df = clean_agencies_column(df, metadata=metadata)
 df.loc[:, "date"] = column_to_date(df, column="public_inspection_issue_date")
 df.loc[:, "year"] = df["date"].apply(lambda x: x.year)
 df.loc[:, "agency_names"] = df["agency_names"].apply(lambda x: "; ".join(x))
@@ -63,7 +68,8 @@ dfWithdrawn = search_columns(dfNote, patterns=[r"\bwithdr[\w]+\b"], columns=["ed
 
 # %% Filter columns
 
-keep_cols = ["year", "date", "agencies_slug_uq", "agency_names", 
+keep_cols = ["year", "date", 
+             "agencies_slug_uq", "agencies_id_uq", "agency_names", 
              "document_number", "editorial_note", "json_url"]
 dfWithdrawn = dfWithdrawn.loc[:, keep_cols]
 
