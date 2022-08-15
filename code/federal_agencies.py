@@ -1,17 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar  2 20:16:28 2022
-
-@author: mark
-"""
-
 # import dependencies
 import pandas as pd
 import requests
 
 # set default agency schema via Federal Register API
 # source: https://www.federalregister.gov/developers/documentation/api/v1
-defaultAgencySchema = ['action',
+DEFAULT_AGENCY_SCHEMA = ['action',
  'administration-office-executive-office-of-the-president',
  'administrative-conference-of-the-united-states',
  'administrative-office-of-united-states-courts',
@@ -470,9 +463,92 @@ defaultAgencySchema = ['action',
  'workers-compensation-programs-office']
 
 
-# function that converts single column from a dataframe into date format
-def FR_clean_agencies(df_input, column = 'agencies', schema = defaultAgencySchema):
-    ''' Convert dataframe columns in str format to datetime.date format.
+def clean_agencies_column(df_input: pd.DataFrame, 
+                          column: str = "agencies", 
+                          schema: list = DEFAULT_AGENCY_SCHEMA, 
+                          metadata: dict = {}):
+    
+    # 1) extract slug from 'agencies' column
+    # create deep copy of input dataframe
+    df = df_input.copy(deep=True)
+    
+    # create list of agencies data
+    agencies_list = df[column].tolist()
+    
+    # empty lists for results
+    slug_list = []
+    
+    # loop over documents and extract agencies data
+    for rule in agencies_list:
+        slug_list.append(x.get('slug', x['raw_name'].lower().replace(" ","-")) for x in rule)
+
+    # clean slug list to only include agencies in the schema
+    # there are some bad metadata -- e.g., 'interim-rule', 'formal-comments-that-were-received-in-response-to-the-nprm-regarding'
+    # also ensure no duplicate agencies in each document's list by using set()
+    slug_list_clean = [list(set(i for i in slug if i in schema)) for slug in slug_list]
+    
+    # check if data was extracted correctly; raise error if not
+    if not len(agencies_list)==len(slug_list_clean):
+        raise Exception("Error extracting data from 'agencies' column.")
+    else:
+        # create new columns with restructured data
+        df.loc[:,'agency_slugs'] = slug_list_clean
+    
+    # 2) generate two columns with unique top-level agency metadata:
+    # a. list of unique top-level ids (i.e., parent_id for sub-agencies and agency_id for agencies without a parent)
+    # b. list of slugs that correspond to the top-level ids
+    
+    # create empty lists for results
+    unique_parent_ids = []
+    unique_parent_slugs = []
+    
+    # iterate over list of clean agency slugs
+    for d in slug_list_clean:
+        # a) create new column: list of unique top-level ids
+        # iterate over parent_ids for each document
+        # return parent_id for sub-agencies and agency_id for agencies with no parent
+        # currently returns intermediate parent for parent agencies with parents
+        ids= []
+        for s in d:
+            if metadata[s].get("parent_id") is not None:
+                ids.append(metadata[s].get("parent_id"))
+            else:
+                ids.append(metadata[s].get("id"))
+        ids = list(set(ids))  # use set() to keep only unique ids
+        unique_parent_ids.append(ids)  # append to results list (a)
+        
+        # b) create new column: list of unique top-level slugs
+        # iterate over each document's unique_parent_ids
+        # return slug for corresponding id from FR API's agencies endpoint
+        slugs = []
+        for i in ids:
+            # locate slug for each input id from agencies endpoint metadata
+            #slugs.extend(a["slug"] for a in metadata if a["id"] == i)  # add id by extending list for each document
+            pass
+            # need to fix this -- return key for internal key: value pair
+        unique_parent_slugs.append(slugs)  # append to results list (b)
+    
+    # check if results make sense; raise error if not
+    if not len(unique_parent_ids)==len(unique_parent_slugs):
+        raise Exception("Error extracting unique data from 'agencies' column.")
+        
+    # create new columns with extracted data
+    df.loc[:,'agencies_id_uq'] = unique_parent_ids
+    df.loc[:,'agencies_slug_uq'] = unique_parent_slugs
+    
+    # 4) reorder columns
+    new_cols = ['agency_slugs', 'agencies_id_uq', 'agencies_slug_uq']  # new columns added
+    col_list = df_input.columns.tolist()  # original columns from df_input
+    index_loc = col_list.index('agencies') + 1  # locate element after "agencies" column
+    new_col_list = col_list[0:index_loc] + new_cols + col_list[index_loc:]  # create new column list
+    df = df.reindex(columns = new_col_list)  # insert new columns after "agencies"
+    
+    # return output df with new columns
+    return df
+
+
+def FR_clean_agencies(df_input: pd.DataFrame, column: str = 'agencies', schema: list = DEFAULT_AGENCY_SCHEMA):
+    """Convert dataframe columns in str format to datetime.date format.
     
     Dependencies
     ------------
@@ -495,8 +571,7 @@ def FR_clean_agencies(df_input, column = 'agencies', schema = defaultAgencySchem
     Dataframe
         Copy of input dataframe with clean 'agencies' data added as new columns.
         New columns are located right after the original 'agencies' column.
-    '''
-    
+    """
     # 1) retrieve agencies metadata from FR API
     # endpoint: /agencies
     # define endpoint url; no parameters needed
