@@ -21,7 +21,7 @@ dctsRules = query_endpoint_public_inspection()
 
 # --------------------------------------------------
 # export json file
-file_path = data_dir / rf"public_inspection_endpoint_rules_midnight.json"
+file_path = data_dir / r"public_inspection_endpoint_midnight_documents.json"
 with open(file_path, "w", encoding="utf-8") as outfile:
     json.dump(dctsRules, outfile, indent=4)
 
