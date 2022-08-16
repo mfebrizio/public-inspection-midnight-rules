@@ -92,7 +92,7 @@ def query_endpoint_public_inspection(endpoint_url: str = r"https://www.federalre
                   ]
 
     years = list(map(str, [2001, 2009, 2017, 2021]))
-    days = [f"01-{x}" for x in range(15,20)]
+    days = [f"01-{x}" for x in range(15,32)]  # scan documents from Jan. 15 to 31
 
     # dictionary of parameters
     dict_params = {"per_page": res_per_page,

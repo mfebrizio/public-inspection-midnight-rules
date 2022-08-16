@@ -523,9 +523,7 @@ def clean_agencies_column(df_input: pd.DataFrame,
         slugs = []
         for i in ids:
             # locate slug for each input id from agencies endpoint metadata
-            #slugs.extend(a["slug"] for a in metadata if a["id"] == i)  # add id by extending list for each document
-            pass
-            # need to fix this -- return key for internal key: value pair
+            slugs.extend(k for k,v in metadata.items() if v.get("id")==i)
         unique_parent_slugs.append(slugs)  # append to results list (b)
     
     # check if results make sense; raise error if not
