@@ -501,6 +501,7 @@ def clean_agencies_column(df_input: pd.DataFrame,
     # create empty lists for results
     unique_parent_ids = []
     unique_parent_slugs = []
+    unique_parent_acronyms = []
     
     # iterate over list of clean agency slugs
     for d in slug_list_clean:
@@ -525,19 +526,26 @@ def clean_agencies_column(df_input: pd.DataFrame,
             # locate slug for each input id from agencies endpoint metadata
             slugs.extend(k for k,v in metadata.items() if v.get("id")==i)
         unique_parent_slugs.append(slugs)  # append to results list (b)
+        
+        # c) create new column: list of unique acronyms
+        acronyms = []
+        for i in ids:
+            acronyms.extend(v.get("short_name") for v in metadata.values() if v.get("id")==i)
+        unique_parent_acronyms.append(acronyms)
     
     # check if results make sense; raise error if not
-    if not len(unique_parent_ids)==len(unique_parent_slugs):
+    if not len(unique_parent_ids)==len(unique_parent_slugs)==len(unique_parent_acronyms):
         raise Exception("Error extracting unique data from 'agencies' column.")
         
     # create new columns with extracted data
-    df.loc[:,'agencies_id_uq'] = unique_parent_ids
-    df.loc[:,'agencies_slug_uq'] = unique_parent_slugs
+    df.loc[:, "agencies_id_uq"] = unique_parent_ids
+    df.loc[:, "agencies_slug_uq"] = unique_parent_slugs
+    df.loc[:, "agencies_acronym_uq"] = unique_parent_acronyms
     
     # 4) reorder columns
-    new_cols = ['agency_slugs', 'agencies_id_uq', 'agencies_slug_uq']  # new columns added
+    new_cols = ["agency_slugs", "agencies_id_uq", "agencies_slug_uq", "agencies_acronym_uq"]  # new columns added
     col_list = df_input.columns.tolist()  # original columns from df_input
-    index_loc = col_list.index('agencies') + 1  # locate element after "agencies" column
+    index_loc = col_list.index("agencies") + 1  # locate element after "agencies" column
     new_col_list = col_list[0:index_loc] + new_cols + col_list[index_loc:]  # create new column list
     df = df.reindex(columns = new_col_list)  # insert new columns after "agencies"
     
