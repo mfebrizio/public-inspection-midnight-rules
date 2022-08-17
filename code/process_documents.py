@@ -24,6 +24,7 @@ else:
     except:
         print("Cannot create data directory.")
 
+
 # %% Load data
 
 # public inspection data
@@ -36,6 +37,7 @@ df = pd.DataFrame(data["results"])
 file_path = read_dir / r"agencies_endpoint_metadata.json"
 with open(file_path, "r", encoding="utf-8") as f:
     metadata = json.load(f)["results"]
+
 
 # %% Data cleaning
 
@@ -68,14 +70,15 @@ dfNote = df.loc[bool_note, :]
 dfWithdrawn = search_columns(dfNote, patterns=[r"\bwithdr[\w]+\b"], columns=["editorial_note"])
 
 # clean agency info for export
-cols = ["agencies_slug_uq", "agencies_id_uq"]
+cols = ["agencies_slug_uq", "agencies_id_uq", "agencies_acronym_uq"]
 for c in cols:
     dfWithdrawn[c] = dfWithdrawn[c].apply(lambda x: "; ".join(str(i) for i in x))
+
 
 # %% Filter columns
 
 keep_cols = ["year", "date", "type", 
-             "agencies_slug_uq", "agencies_id_uq", "agency_names", 
+             "agencies_slug_uq", "agencies_id_uq", "agencies_acronym_uq", "agency_names", 
              "document_number", "editorial_note", "json_url"]
 dfWithdrawn = dfWithdrawn.loc[:, keep_cols]
 
@@ -83,6 +86,7 @@ dfWithdrawn = dfWithdrawn.loc[:, keep_cols]
 dfWithdrawn = dfWithdrawn.sort_values(["year", "date", "type", "agencies_slug_uq"], kind="stable")
 
 print(dfWithdrawn.iloc[:,:5].head())
+
 
 # %% Save processed data
 
