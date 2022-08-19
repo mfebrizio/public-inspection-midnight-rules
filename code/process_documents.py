@@ -79,7 +79,7 @@ for c in cols:
 
 keep_cols = ["year", "date", "type", 
              "agencies_slug_uq", "agencies_id_uq", "agencies_acronym_uq", "agency_names", 
-             "document_number", "editorial_note", "json_url"]
+             "document_number", "title", "editorial_note", "json_url"]
 dfWithdrawn = dfWithdrawn.loc[:, keep_cols]
 
 # sort df

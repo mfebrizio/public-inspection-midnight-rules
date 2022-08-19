@@ -87,7 +87,7 @@ def query_endpoint_public_inspection(endpoint_url: str = r"https://www.federalre
     page_offset = 0  # both 0 and 1 return first page
 
     fieldsList = ["agencies", "agency_letters", "agency_names", 
-                  "document_number", "editorial_note", "filing_type", 
+                  "document_number", "title", "editorial_note", "filing_type", 
                   "json_url", "publication_date", "type"
                   ]
 
