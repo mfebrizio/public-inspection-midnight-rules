@@ -5,18 +5,20 @@ Mark Febrizio
 # %% Initialize
 from pathlib import Path
 
-import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
+
+from plots import plot_and_save_barh
 
 p = Path(__file__)
 read_dir = p.parents[1].joinpath("data", "processed")
 write_dir = p.parents[1].joinpath("data", "analysis")
-if write_dir.exists():
+fig_path = p.parents[1].joinpath("data", "analysis", "figures")
+if write_dir.exists() and fig_path.exists():
     pass
 else:
     try:
-        write_dir.mkdir(parents=True)
+        write_dir.mkdir(parents=True, exist_ok=True)
+        fig_path.mkdir(parents=True, exist_ok=True)
     except:
         print("Cannot create data directory.")
 
@@ -54,9 +56,36 @@ by_agency_year_2 = pd.concat([by_agency_year, missing_], verify_integrity=True, 
 print(by_agency_year_2)
 
 
-# %% Plot
+# %% Plot data
+
+# by type
+colors = ["#003b5c", "#a89968", "#009cde"]
+labels = {"x": "Number of documents", 
+          "y": "Transition year", 
+          "t": "Figure 1: Public Inspection Documents Withdrawn by Type", 
+          "a": "Source: Federal Register API and author's calculations."
+          }
+save_path = fig_path / r"withdrawn_by_type.png"
+
+plot_and_save_barh(by_year_type, "documents", "year", "type", 
+                   color_list=colors, xlabel=labels["x"], ylabel=labels["y"], 
+                   title=labels["t"], 
+                   text_annotation=(0.1, 0, labels["a"]), save_as=save_path)
+
+# by agency
+colors = ["red", "blue"]
+labels = {"x": "Number of documents", 
+          "y": "Agency acronym", 
+          "t": "Figure 2: Public Inspection Documents Withdrawn by Agency", 
+          "a": "Source: Federal Register API and author's calculations.", 
+          "leg": "Year"}
+save_path = fig_path / r"withdrawn_by_agency.png"
+
+plot_and_save_barh(by_agency_year_2, "documents", "agency", "year", 
+                   color_list=colors, xlabel=labels["x"], ylabel=labels["y"], 
+                   title=labels["t"], legend_title=labels["leg"], 
+                   xlim=(0, 18), xticks=(list(range(0, 21, 3)), None), 
+                   text_annotation=(0.1, 0, labels["a"]), save_as=save_path)
 
 
-
-
-#plt.
+# %%
