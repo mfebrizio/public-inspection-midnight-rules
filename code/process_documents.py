@@ -70,7 +70,7 @@ dfNote = df.loc[bool_note, :]
 dfWithdrawn = search_columns(dfNote, patterns=[r"\bwithdr[\w]+\b"], columns=["editorial_note"])
 
 # clean agency info for export
-cols = ["agencies_slug_uq", "agencies_id_uq", "agencies_acronym_uq"]
+cols = ["agencies_slug_uq", "agencies_id_uq", "agencies_acronym_uq", "agency_slugs"]
 for c in cols:
     dfWithdrawn[c] = dfWithdrawn[c].apply(lambda x: "; ".join(str(i) for i in x))
 
@@ -78,8 +78,8 @@ for c in cols:
 # %% Filter columns
 
 keep_cols = ["year", "date", "type", 
-             "agencies_slug_uq", "agencies_id_uq", "agencies_acronym_uq", "agency_names", 
-             "document_number", "title", "editorial_note", "json_url"]
+             "agencies_slug_uq", "agencies_id_uq", "agencies_acronym_uq", "agency_names", "agency_slugs", 
+             "document_number", "title", "editorial_note", "filing_type", "json_url"]
 dfWithdrawn = dfWithdrawn.loc[:, keep_cols]
 
 # sort df
@@ -94,3 +94,4 @@ file_path = write_dir / r"public_inspection_midnight_documents_withdrawn.csv"
 with open(file_path, 'w', encoding='utf-8') as f:
     dfWithdrawn.to_csv(f, index=False, line_terminator='\n')
 print('Exported as CSV!')
+

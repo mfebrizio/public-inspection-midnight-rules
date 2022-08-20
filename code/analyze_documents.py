@@ -84,8 +84,20 @@ save_path = fig_path / r"withdrawn_by_agency.png"
 plot_and_save_barh(by_agency_year_2, "documents", "agency", "year", 
                    color_list=colors, xlabel=labels["x"], ylabel=labels["y"], 
                    title=labels["t"], legend_title=labels["leg"], 
-                   xlim=(0, 18), xticks=(list(range(0, 21, 3)), None), 
+                   xlim=(0, 17), xticks=(list(range(0, 18, 3)), None), 
                    text_annotation=(0.1, 0, labels["a"]), save_as=save_path)
 
 
-# %%
+# %% Export spreadsheet
+
+base = "https://www.federalregister.gov/public-inspection/"
+df.loc[:, "date_slash"] = df["date"].apply(lambda x: x.replace("-", r"/"))
+df.loc[:, "pi_url"] = base + df["date_slash"] + "#" + df["filing_type"] + "-filing-" + df["agency_slugs"]
+
+write_cols = ["date", "type", "agencies_acronym_uq", "title", "pi_url"]
+
+file_path = write_dir / r"documents_withdrawn.csv"
+with open(file_path, 'w', encoding='utf-8') as f:
+    df.to_csv(f, index=False, line_terminator='\n', columns=write_cols)
+print('Exported as CSV!')
+
