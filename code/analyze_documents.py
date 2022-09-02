@@ -4,9 +4,7 @@ Mark Febrizio
 
 # %% Initialize
 from pathlib import Path
-
 import pandas as pd
-
 from plots import plot_and_save_barh
 
 p = Path(__file__)
