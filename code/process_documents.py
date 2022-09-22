@@ -1,5 +1,6 @@
 """
 Mark Febrizio
+Last revised: 2022-09-22
 """
 
 # %% Initialize
@@ -62,12 +63,15 @@ if sum(df["agency_letters"].notna()) == 0:
 # bool_rules = np.array(df["type"] == "Rule")
 # dfRules = df.loc[bool_rules, :]
 
+
+# %% Identify withdrawn documents
+
 # filter by has editorial_note
 bool_note = np.array(df["editorial_note"].notna())
-dfNote = df.loc[bool_note, :]
+df.loc[~bool_note, "editorial_note"] = ""
 
-# search editorial_note for withdrawals
-dfWithdrawn = search_columns(dfNote, patterns=[r"\bwithdr[\w]+\b"], columns=["editorial_note"])
+# search editorial_note for withdrawals; returns df with an indicator for withdrawn
+dfWithdrawn = search_columns(df, patterns=[r"\bwithdr[\w]+\b"], columns=["editorial_note"])
 
 # clean agency info for export
 cols = ["agencies_slug_uq", "agencies_id_uq", "agencies_acronym_uq", "agency_slugs"]
@@ -79,7 +83,7 @@ for c in cols:
 
 keep_cols = ["year", "date", "type", 
              "agencies_slug_uq", "agencies_id_uq", "agencies_acronym_uq", "agency_names", "agency_slugs", 
-             "document_number", "title", "editorial_note", "filing_type", "json_url"]
+             "document_number", "title", "editorial_note", "filing_type", "json_url", "indicator"]
 dfWithdrawn = dfWithdrawn.loc[:, keep_cols]
 
 # sort df
@@ -90,8 +94,15 @@ print(dfWithdrawn.iloc[:,:5].head())
 
 # %% Save processed data
 
-file_path = write_dir / r"public_inspection_midnight_documents_withdrawn.csv"
+file_path = write_dir / r"public_inspection_midnight_documents_all.csv"
 with open(file_path, 'w', encoding='utf-8') as f:
     dfWithdrawn.to_csv(f, index=False, line_terminator='\n')
+print('Exported as CSV!')
+
+bool_filter = dfWithdrawn["indicator"] == 1
+column_filter = dfWithdrawn.columns[-2]
+file_path = write_dir / r"public_inspection_midnight_documents_withdrawn.csv"
+with open(file_path, 'w', encoding='utf-8') as f:
+    dfWithdrawn.loc[bool_filter, :column_filter].to_csv(f, index=False, line_terminator='\n')
 print('Exported as CSV!')
 
