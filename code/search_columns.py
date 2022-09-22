@@ -5,7 +5,11 @@ import numpy as np
 
 
 # Defining a function to search for string patterns within dataframe columns
-def search_columns(df, patterns:list = [], columns:list = [], re_flags = re.I|re.X):
+def search_columns(df, 
+                   return_as: str = "indicator_column", 
+                   patterns: list = [], 
+                   columns: list = [], 
+                   re_flags = re.I|re.X):
     """Search columns for string patterns within dataframe columns.
 
     Parameters
@@ -21,9 +25,9 @@ def search_columns(df, patterns:list = [], columns:list = [], re_flags = re.I|re
     
     Dependencies
     ------------
-    pandas
-    numpy
     itertools
+    re
+    numpy    
     """
     # create list object for appending boolean arrays
     bool_list = []
@@ -55,16 +59,27 @@ def search_columns(df, patterns:list = [], columns:list = [], re_flags = re.I|re
             bool_list.append(searchbool)
            
     else:  # eg, patterns formatted as a list of len(n>1) but does not match len(columns)
-        raise Exception('Length of inputs are incorrect. Lengths of "patterns" and "columns" must match '+
-        'or a single pattern can map to multiple columns.')
+        raise Exception("Length of inputs are incorrect. Lengths of 'patterns' and 'columns' must match " +
+        "or a single pattern can map to multiple columns.")
 
     # combine each "searchbool" array elementwise
     # we want a positive match for any column to evaluate as True
     # equivalent to (bool_list[0] | bool_list[1] | bool_list[2] | ... | bool_list[n-1])
     filter_bool = np.array(bool_list).any(axis=0)
 
-    # filter results
-    dfResults = df.loc[filter_bool,:].copy(deep=True)
-    print('Count: '+str(len(dfResults)))
-    return dfResults
+    if return_as=="indicator_column":
+        dfResults = df.copy(deep=True)
+        dfResults.loc[:, "indicator"] = 0
+        dfResults.loc[filter_bool, "indicator"] = 1
+        print(f"Count: {sum(dfResults['indicator'].values)}")
+        return dfResults
+    
+    elif return_as=="filtered_df":
+        # filter results
+        dfResults = df.loc[filter_bool,:].copy(deep=True)
+        print(f"Count: {len(dfResults)}")
+        return dfResults
+    
+    else:
+        raise Exception("Incorrect input for 'return_as' parameter.")
 
