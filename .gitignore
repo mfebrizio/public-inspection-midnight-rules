@@ -1,5 +1,7 @@
-# data directory
-#data/**  # commenting this out for now
+# data directory subfolders
+data/raw/**
+data/processed/**
+data/analysis/**
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
