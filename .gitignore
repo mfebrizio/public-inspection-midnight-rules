@@ -1,6 +1,6 @@
 # data directory subfolders
 
-data/*
+data/**
 !data/for_sharing/
 #data/raw/
 #data/processed/
