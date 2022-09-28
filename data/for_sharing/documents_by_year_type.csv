@@ -1,0 +1,9 @@
+year,type,documents_withdrawn,documents_all,withdrawal_rate
+2017,Notice,25,949,0.026
+2017,Presidential Document,0,38,0.0
+2017,Proposed Rule,3,75,0.04
+2017,Rule,14,157,0.089
+2021,Notice,12,835,0.014
+2021,Presidential Document,0,56,0.0
+2021,Proposed Rule,3,49,0.061
+2021,Rule,3,86,0.035

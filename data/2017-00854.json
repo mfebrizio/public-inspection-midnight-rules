@@ -1,0 +1,38 @@
+{
+    "agencies": [
+        {
+            "raw_name": "Animal and Plant Health Inspection Service",
+            "name": "Animal and Plant Health Inspection Service",
+            "id": 22,
+            "url": "https://www.federalregister.gov/agencies/animal-and-plant-health-inspection-service",
+            "json_url": "https://www.federalregister.gov/api/v1/agencies/22",
+            "slug": "animal-and-plant-health-inspection-service"
+        }
+    ],
+    "agency_letters": null,
+    "agency_names": [
+        "Animal and Plant Health Inspection Service"
+    ],
+    "docket_numbers": [],
+    "document_number": "2017-00854",
+    "editorial_note": "APHIS requested the withdrawal of this document after it was on public inspection. It will remain on public inspection until the close of business on January 24. A copy of the withdrawal request is available at the Office of the Federal Register.",
+    "filed_at": null,
+    "filing_type": "special",
+    "html_url": "https://www.federalregister.gov/public-inspection/2017-00854/horse-protection-licensing-of-designated-qualified-persons-and-other-amendments",
+    "last_public_inspection_issue": "2017-01-24",
+    "num_pages": 1,
+    "page_views": null,
+    "pdf_file_name": "2017-00854_PI.pdf",
+    "pdf_file_size": 45275,
+    "pdf_updated_at": "2017-01-23T09:24:22.000-05:00",
+    "pdf_url": "https://public-inspection.federalregister.gov/2017-00854.pdf",
+    "publication_date": null,
+    "raw_text_url": "https://www.federalregister.gov/public-inspection/raw_text/201/700/854.txt",
+    "subject_1": "Horse Protection:",
+    "subject_2": "Licensing of Designated Qualified Persons and Other Amendments",
+    "subject_3": null,
+    "title": "Horse Protection: Licensing of Designated Qualified Persons and Other Amendments",
+    "toc_doc": "Licensing of Designated Qualified Persons and Other Amendments",
+    "toc_subject": "Horse Protection:",
+    "type": "Rule"
+}
