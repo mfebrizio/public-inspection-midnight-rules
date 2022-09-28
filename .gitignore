@@ -1,9 +1,12 @@
 # data directory subfolders
-data/raw/
-data/processed/
-data/analysis/
 
-*.html
+data/
+!data/for_sharing/
+#data/raw/
+#data/processed/
+#data/analysis/
+
+#*.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
