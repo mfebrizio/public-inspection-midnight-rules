@@ -1,0 +1,9 @@
+# data subfolders
+raw/**
+processed/**
+analysis/**
+
+# data files
+.json
+.txt
+.html

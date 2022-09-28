@@ -1,7 +1,5 @@
 # data directory
-data/**
-#data/processed/figures/**
-!data/for_sharing/**
+#data/**  # commenting this out for now
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
