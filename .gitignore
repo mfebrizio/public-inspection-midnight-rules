@@ -3,6 +3,8 @@ data/raw/
 data/processed/
 data/analysis/
 
+*.html
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
