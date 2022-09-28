@@ -1,5 +1,6 @@
 # data directory
 data/**
+!data/for_sharing/**
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
