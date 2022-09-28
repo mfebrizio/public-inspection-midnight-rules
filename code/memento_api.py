@@ -12,8 +12,8 @@ from memento_client import MementoClient
 
 
 def get_date_tuples(df, column = "date"):
-    dates_list = list(map(lambda x: tuple(x.split(r"/")), df[column].values))
-    dates_list = list(map(lambda x: x[-1::] + x[0:-1], dates_list))
+    dates_list = list(map(lambda x: tuple(x.split(r"-")), df[column].values))
+    #dates_list = list(map(lambda x: x[-1::] + x[0:-1], dates_list))
     dates_list = [tuple(map(lambda x: int(x), t)) for t in dates_list]
     return dates_list
 
