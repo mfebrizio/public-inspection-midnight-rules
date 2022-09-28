@@ -1,5 +1,6 @@
 # data directory
 data/**
+#data/processed/figures/**
 !data/for_sharing/**
 
 # Byte-compiled / optimized / DLL files
