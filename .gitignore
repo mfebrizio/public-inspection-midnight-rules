@@ -2,6 +2,9 @@
 data/
 !data/for_sharing/
 
+# temporary scripts
+code/temp.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
