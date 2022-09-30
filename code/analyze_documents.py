@@ -29,6 +29,37 @@ with open(file_path, "r", encoding="utf-8") as f:
 print(f"DataFrame with {len(df)} observations loaded, including {sum(df['indicator'])} withdrawn documents.")
 
 
+# %% Pivot data by day
+
+# document counts by date
+by_day = pd.pivot_table(df, index=["date"], 
+                        values=["document_number"], 
+                        columns=["indicator"], 
+                        aggfunc="count", fill_value=0, margins=True)
+
+by_day = by_day.reset_index()
+by_day.columns = ["date", "not_withdrawn", "withdrawn", "total"]
+
+file_path = write_dir / r"documents_by_day.csv"
+with open(file_path, 'w', encoding='utf-8') as f:
+    by_day.to_csv(f, index=False, line_terminator='\n')
+print('Exported as CSV!')
+
+# docoument count by date type
+by_day_type = pd.pivot_table(df, index=["date", "type"], 
+                        values=["document_number"], 
+                        columns=["indicator"], 
+                        aggfunc="count", fill_value=0, margins=True)
+
+by_day_type = by_day_type.reset_index()
+by_day_type.columns = ["date", "type", "not_withdrawn", "withdrawn", "total"]
+
+file_path = write_dir / r"documents_by_day_type.csv"
+with open(file_path, 'w', encoding='utf-8') as f:
+    by_day_type.to_csv(f, index=False, line_terminator='\n')
+print('Exported as CSV!')
+
+
 # %% Aggregate and export data
 
 # groupby year and document type
