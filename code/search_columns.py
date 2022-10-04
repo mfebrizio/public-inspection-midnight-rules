@@ -6,9 +6,9 @@ import numpy as np
 
 # Defining a function to search for string patterns within dataframe columns
 def search_columns(df, 
+                   patterns: list, 
+                   columns: list, 
                    return_as: str = "indicator_column", 
-                   patterns: list = [], 
-                   columns: list = [], 
                    re_flags = re.I|re.X):
     """Search columns for string patterns within dataframe columns.
 
@@ -16,18 +16,21 @@ def search_columns(df,
     ----------
     
     Positional arguments:
-    df -- input data in format of pandas dataframe
+    df (DataFrame):  Input data in format of pandas dataframe.
+    patterns (list):  List of string patterns to input, compatible with regex.
+    columns (list):  List of column names to search for input patterns.
     
-    Keyword arguments:
-    patterns -- list of string patterns to input, compatible with regex (default = empty list)
-    columns -- list of column names to search for input patterns (default = empty list)
-    re_flags -- regex flags to use, such as re.I|re.X (default = re.I|re.X)
+    Keyword arguments: 
+    return_as (str):  Choose whether to return a DataFrame with indicator column ("indicator_column", the default) or a DataFrame filtered by the search terms ("filtered_df").
+    re_flags:  Regex flags to use (default = re.I|re.X)
+    
+    Returns
+    -------
+    DataFrame with "indicator" column or filtered by search terms.
     
     Dependencies
     ------------
-    itertools
-    re
-    numpy    
+    numpy
     """
     # create list object for appending boolean arrays
     bool_list = []
@@ -36,7 +39,7 @@ def search_columns(df,
     if type(patterns)==list and type(columns)==list:
         pass
     else:
-        raise Exception('Inputs for "patterns" and "columns" keywords must be lists.')
+        raise TypeError('Inputs for "patterns" and "columns" keywords must be lists.')
         
     if len(patterns)==len(columns):
         # create list of inputs in format [(pattern1, column1),(pattern2, column2), ...]
