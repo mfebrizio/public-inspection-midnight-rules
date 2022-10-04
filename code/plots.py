@@ -3,6 +3,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# set default pixel density
+# reference: https://blakeaw.github.io/2020-05-25-improve-matplotlib-notebook-inline-res/
+sns.set(rc={"figure.dpi": 300, 'savefig.dpi': 300})
+
 
 def plot_and_save_barh(df, x_var, y_var, cat_var, 
                        color_list: list = None, 
