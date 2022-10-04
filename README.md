@@ -26,6 +26,24 @@ The [Federal Register](https://www.federalregister.gov) is the daily journal of 
 
 + **README.md**
 
+## Coding Sequence
+
+This section of the README describes the sequence in which the Python scripts should be run.
+
+1. **retrieve_documents.py** : Retrieve public inspection documents from Federal Register API and save as JSON. Calls modules: *federal_register_api*.
+
+2. **process_documents.py** : Process the retrieved JSON, convert to DataFrame, identify withdrawn documents, and save as CSV. Calls modules: *columns_to_date*, *federal_agencies*, *search_columns*.
+
+3. **analyze_documents.py** : Analyze processed data, calculate aggregations, and create figures. Calls modules: *plots*.
+
+4. **retrieve_web_archives.py** : Retrieves closest available archived webpage to each public inspection edition; adds archived links to withdrawn documents CSV. Calls modules: *memento_api*. Note: Memento Client seems to be having issues as of at least October 4, 2022 (502 Bad Gateway).
+
+5. **merge_analyzed_data.py** : Integrate analyzed data with manually collected NPRM data. Calls modules: n/a.
+
+6. **analyze_midnight_rules.py** : Retreives, processes, and analyzes data on midnight rules for comparison with public inspection withdrawals. Calls modules: *columns_to_date*, *federal_agencies*, *federal_register_api*, *presidents*, *search_columns*.
+
+7. **share_data.py** : Copy data files into "data/for_sharing" directory. Calls modules: n/a.
+
 ## Publications
 
 Mark Febrizio, "Quantifying the Effects of Humane Society v. USDA: Withdrawn Public Inspection Documents Include Significant Rules," GW Regulatory Studies Center Insight, October dd, 2022.
