@@ -21,7 +21,8 @@ file_list = ["public_inspection_midnight_documents_all.csv",
              "documents_by_year_type.csv", 
              "documents_withdrawn_archived_checked.csv",
              "nprm_data.csv", 
-             "rules_withdrawn_priority.csv"
+             "rules_withdrawn_priority.csv", 
+             "midnight_rules_by_president_year_month.csv"
              ]
 
 # copy files to sharing_dir
