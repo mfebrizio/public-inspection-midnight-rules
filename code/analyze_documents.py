@@ -119,7 +119,7 @@ colors = ["#003b5c", "#a89968", "#009cde"]
 labels = {"x": "Number of documents", 
           "y": "Transition year", 
           "t": "Figure 1: Public Inspection Documents Withdrawn by Type", 
-          "a": "Source: Federal Register API and author's calculations. Data includes documents appearing between January 15-31."
+          "a": "Source: Federal Register API and author's calculations. Data include documents appearing between January 15-31."
           }
 save_path = fig_path / r"withdrawn_by_type.png"
 
@@ -133,7 +133,7 @@ colors = ["red", "blue"]
 labels = {"x": "Number of documents", 
           "y": "Agency acronym", 
           "t": "Figure 2: Public Inspection Documents Withdrawn by Agency", 
-          "a": "Source: Federal Register API and author's calculations. Data includes documents appearing between January 15-31.", 
+          "a": "Source: Federal Register API and author's calculations. Data include documents appearing between January 15-31.", 
           "leg": "Transition\nYear"}
 save_path = fig_path / r"withdrawn_by_agency.png"
 

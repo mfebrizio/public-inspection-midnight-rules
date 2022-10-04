@@ -5,7 +5,11 @@ import seaborn as sns
 
 # set default pixel density
 # reference: https://blakeaw.github.io/2020-05-25-improve-matplotlib-notebook-inline-res/
-sns.set(rc={"figure.dpi": 300, 'savefig.dpi': 300})
+# reference: https://stackoverflow.com/questions/31594549/how-to-change-the-figure-size-of-a-seaborn-axes-or-figure-level-plot
+sns.set(rc={"figure.dpi": 300, 
+            "savefig.dpi": 300, 
+            "figure.figsize": (11.7, 8.27)
+            })
 
 
 def plot_and_save_barh(df, x_var, y_var, cat_var, 
