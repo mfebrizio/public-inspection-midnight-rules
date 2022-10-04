@@ -45,7 +45,7 @@ with open(file_path, 'w', encoding='utf-8') as f:
     by_day.to_csv(f, index=False, line_terminator='\n')
 print('Exported as CSV!')
 
-# docoument count by date type
+# document count by date type
 by_day_type = pd.pivot_table(df, index=["date", "type"], 
                         values=["document_number"], 
                         columns=["indicator"], 
@@ -102,7 +102,7 @@ print(by_agency_year)
 # %% Add implicit zero values to data
 
 bool_dup = by_agency_year.duplicated(subset="agency", keep=False)
-missing_ = by_agency_year.loc[~bool_dup, :]
+missing_ = by_agency_year.copy(deep=True).loc[~bool_dup, :]
 missing_.loc[:, "documents_withdrawn"] = 0
 missing_.loc[:, "documents_all"] = 0
 missing_.loc[:, "withdrawal_rate"] = 0
@@ -126,7 +126,7 @@ save_path = fig_path / r"withdrawn_by_type.png"
 plot_and_save_barh(by_year_type, "documents_withdrawn", "year", "type", 
                    color_list=colors, xlabel=labels["x"], ylabel=labels["y"], 
                    title=labels["t"], 
-                   text_annotation=(0.1, 0, labels["a"]), save_as=save_path)
+                   text_annotation=(0.08, 0, labels["a"]), save_as=save_path)
 
 # by agency
 colors = ["red", "blue"]
@@ -141,7 +141,7 @@ plot_and_save_barh(by_agency_year_2, "documents_withdrawn", "agency", "year",
                    color_list=colors, xlabel=labels["x"], ylabel=labels["y"], 
                    title=labels["t"], legend_title=labels["leg"], 
                    xlim=(0, 17), xticks=(list(range(0, 18, 3)), None), 
-                   text_annotation=(0.1, 0, labels["a"]), save_as=save_path)
+                   text_annotation=(0.08, 0, labels["a"]), save_as=save_path)
 
 
 # %% Export data
