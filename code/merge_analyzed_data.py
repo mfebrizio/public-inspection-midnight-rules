@@ -34,12 +34,12 @@ print(dfMerged["type"].value_counts(dropna=False))
 
 # %% Clean merged data
 
-keep_cols = ["date", 
-             "document_number", 
-             "agencies_acronym_uq", 'pi_url', 
-             'title_x', 'document_url', 
-             'nprm_document_number', 'url_fr', 
-             'nprm_rin', 'url_rin', 
+keep_cols = ["date", 'pi_url', 
+             "document_number", 'document_url', 
+             "agencies_acronym_uq", 
+             'title_x', 
+             'nprm_document_number', 'fr_nprm_url', 
+             'nprm_rin', 'rin_url', 
              'rin_priority', 'notes']
 
 dfClean = dfMerged[keep_cols]
