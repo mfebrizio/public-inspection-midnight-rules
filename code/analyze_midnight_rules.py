@@ -70,5 +70,3 @@ with open(file_path, 'w', encoding='utf-8') as f:
     by_prez_yyyy_mm.to_csv(f, index=False, line_terminator='\n')
 print('Exported as CSV!')
 
-
-# %%
