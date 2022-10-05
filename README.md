@@ -36,7 +36,7 @@ This section of the README describes the sequence in which the Python scripts sh
 
 3. **analyze_documents.py** : Analyze processed data, calculate aggregations, and create figures. Calls modules: *plots*.
 
-4. **retrieve_web_archives.py** : Retrieves closest available archived webpage to each public inspection edition; adds archived links to withdrawn documents CSV. Calls modules: *memento_api*. Note: Memento Client seems to be having issues as of at least October 4, 2022 (502 Bad Gateway).
+4. **retrieve_web_archives.py** : Retrieves closest available archived webpage to each public inspection edition; adds archived links to withdrawn documents CSV. Calls modules: *memento_api*. Note: [Memento Client's Time Travel tool](http://timetravel.mementoweb.org/) seems to be having issues as of at least October 4, 2022 (502 Bad Gateway), so this script may not function properly.
 
 5. **merge_analyzed_data.py** : Integrate analyzed data with manually collected NPRM data. Calls modules: n/a.
 
