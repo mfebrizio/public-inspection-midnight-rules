@@ -46,4 +46,4 @@ This section of the README describes the sequence in which the Python scripts sh
 
 ## Publications
 
-Mark Febrizio, "Quantifying the Effects of Humane Society v. USDA: Withdrawn Public Inspection Documents Include Significant Rules," GW Regulatory Studies Center Insight, October dd, 2022.
+Mark Febrizio, "[Quantifying the Effects of Humane Society v. USDA: Withdrawn Public Inspection Documents Include Significant Rules](https://regulatorystudies.columbian.gwu.edu/quantifying-effects-humane-society-v-department-agriculture)," GW Regulatory Studies Center Insight, October 05, 2022.
